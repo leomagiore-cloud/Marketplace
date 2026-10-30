@@ -82,3 +82,9 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# Perfis e caches do Chrome
+chrome-profile/
+chrome-profile-conta2/
+**/chrome-profile*/
+**/Cache/
