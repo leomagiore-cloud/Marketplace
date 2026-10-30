@@ -1,0 +1,84 @@
+# ===== Segredos e ambiente =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+config/secrets.*
+
+# ===== Node / JavaScript / TypeScript =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.ipynb_checkpoints/
+
+# ===== Java / Kotlin / Gradle / Maven =====
+*.class
+*.jar
+*.war
+*.ear
+target/
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+*.log
+
+# ===== .NET / C# =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.dll
+*.pdb
+
+# ===== IDE / Editores =====
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# ===== Sistema operacional =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Logs e temporários =====
+*.log
+logs/
+tmp/
+temp/
+*.tmp

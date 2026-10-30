@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magiore Marketplace</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:        #0f1117;
+    --surface:   #1a1d27;
+    --border:    #2a2d3a;
+    --green:     #22c55e;
+    --green-dim: #166534;
+    --red:       #ef4444;
+    --yellow:    #eab308;
+    --blue:      #3b82f6;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --radius:    10px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── TITLEBAR ── */
+  #titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 44px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    -webkit-app-region: drag;
+    flex-shrink: 0;
+  }
+  #titlebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  #titlebar .brand .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  .dot.off { background: var(--muted) !important; box-shadow: none !important; animation: none !important; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .win-btns {
+    display: flex;
+    gap: 8px;
+    -webkit-app-region: no-drag;
+  }
+  .win-btn {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .win-btn:hover { background: var(--border); color: var(--text); }
+  .win-btn.close:hover { background: var(--red); color: #fff; }
+
+  /* ── MAIN LAYOUT ── */
+  #main {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* Status card */
+  .status-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .status-row:last-child { margin-bottom: 0; }
+  .status-label { font-size: 12px; color: var(--muted); }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .badge.ativo   { background: #14532d; color: var(--green); }
+  .badge.inativo { background: #1c1917; color: var(--muted); }
+  .badge.busy    { background: #1e3a5f; color: var(--blue); }
+  .badge.count   { background: var(--border); color: var(--text); }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary {
+    background: var(--green);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) { background: #16a34a; }
+  .btn-danger {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+  }
+  .btn-danger:hover:not(:disabled) { background: #7f1d1d22; }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--border); }
+  .btn-accent {
+    background: #1e3a5f;
+    color: var(--blue);
+    border: 1px solid #2563eb44;
+  }
+  .btn-accent:hover:not(:disabled) { background: #1d4ed822; }
+
+  /* Schedule */
+  .schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .schedule-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .schedule-item .clock { font-size: 16px; }
+  .schedule-item .info { flex: 1; }
+  .schedule-item .time { font-size: 13px; font-weight: 600; color: var(--text); }
+  .schedule-item .next { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* ── LOG PANEL ── */
+  #log-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 20px;
+    gap: 12px;
+  }
+
+  .log-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #log-container {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-y: auto;
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.6;
+  }
+
+  .log-line {
+    display: flex;
+    gap: 10px;
+    padding: 2px 0;
+    border-radius: 4px;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .log-line .ts   { color: var(--muted); min-width: 60px; }
+  .log-line .msg  { color: var(--text); word-break: break-all; }
+  .log-line.warn  .msg { color: var(--yellow); }
+  .log-line.error .msg { color: var(--red); }
+  .log-line.info  .msg { color: var(--text); }
+
+  #log-container::-webkit-scrollbar { width: 4px; }
+  #log-container::-webkit-scrollbar-track { background: transparent; }
+  #log-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .log-empty {
+    color: var(--muted);
+    text-align: center;
+    margin-top: 40px;
+    font-size: 12px;
+  }
+
+  /* Dividers */
+  hr { border: none; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- TITLEBAR -->
+<div id="titlebar">
+  <div class="brand">
+    <span class="dot" id="statusDot"></span>
+    Magiore Marketplace Poster
+  </div>
+  <div class="win-btns">
+    <button class="win-btn" onclick="app.enviar('minimizar')" title="Minimizar">─</button>
+    <button class="win-btn close" onclick="app.enviar('fechar')" title="Minimizar para bandeja">✕</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+
+    <!-- Status -->
+    <div>
+      <div class="section-label">Status</div>
+      <div class="status-card">
+        <div class="status-row">
+          <span class="status-label">Agendamento</span>
+          <span class="badge inativo" id="badgeScheduler">Inativo</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Postagem</span>
+          <span class="badge inativo" id="badgePostando">Aguardando</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Pendentes</span>
+          <span class="badge count" id="badgePendentes">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div>
+      <div class="section-label">Ações</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-primary" id="btnIniciar" onclick="app.enviar('iniciar')">
+          ▶ Iniciar Agendamento
+        </button>
+        <button class="btn btn-danger" id="btnParar" onclick="app.enviar('parar')" disabled>
+          ⏹ Parar Agendamento
+        </button>
+        <button class="btn btn-accent" id="btnPostar" onclick="app.enviar('postar-agora')">
+          📤 Postar Agora
+        </button>
+        <hr>
+        <button class="btn btn-ghost" onclick="app.enviar('abrir-sheets')">
+          📊 Abrir Planilha
+        </button>
+        <button class="btn btn-ghost" onclick="app.enviar('refresh')">
+          🔄 Atualizar Status
+        </button>
+      </div>
+    </div>
+
+    <!-- Próximas postagens -->
+    <div>
+      <div class="section-label">Próximas Postagens</div>
+      <div class="schedule-list" id="scheduleList">
+        <div class="schedule-item">
+          <span class="clock">⏰</span>
+          <div class="info">
+            <div class="time">Carregando...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOG PANEL -->
+  <div id="log-panel">
+    <div class="log-header">
+      <div class="section-label" style="margin:0">Log de Atividades</div>
+      <button class="btn btn-ghost" style="width:auto;padding:4px 10px;font-size:11px"
+              onclick="limparLogs()">Limpar</button>
+    </div>
+
+    <div id="log-container">
+      <div class="log-empty" id="logEmpty">
+        Nenhuma atividade ainda.<br>Clique em "Iniciar Agendamento" ou "Postar Agora".
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let autoScroll = true;
+const logContainer = document.getElementById('log-container');
+const logEmpty = document.getElementById('logEmpty');
+
+// Detecta scroll manual para pausar auto-scroll
+logContainer.addEventListener('scroll', () => {
+  const diff = logContainer.scrollHeight - logContainer.scrollTop - logContainer.clientHeight;
+  autoScroll = diff < 40;
+});
+
+function adicionarLinha(log) {
+  logEmpty.style.display = 'none';
+  const div = document.createElement('div');
+  div.className = `log-line ${log.nivel}`;
+  div.innerHTML = `<span class="ts">${log.ts}</span><span class="msg">${escapeHtml(log.msg)}</span>`;
+  logContainer.insertBefore(div, logContainer.firstChild);
+
+  // Mantém máx 300 linhas
+  while (logContainer.children.length > 301) {
+    logContainer.removeChild(logContainer.lastChild);
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function limparLogs() {
+  logContainer.innerHTML = '';
+  logContainer.appendChild(logEmpty);
+  logEmpty.style.display = 'block';
+}
+
+function atualizarUI(status) {
+  // Dot animado
+  const dot = document.getElementById('statusDot');
+  dot.className = 'dot' + (status.schedulerAtivo ? '' : ' off');
+
+  // Badges
+  const badgeScheduler = document.getElementById('badgeScheduler');
+  badgeScheduler.textContent = status.schedulerAtivo ? 'Ativo' : 'Inativo';
+  badgeScheduler.className = 'badge ' + (status.schedulerAtivo ? 'ativo' : 'inativo');
+
+  const badgePostando = document.getElementById('badgePostando');
+  badgePostando.textContent = status.postando ? 'Postando...' : 'Aguardando';
+  badgePostando.className = 'badge ' + (status.postando ? 'busy' : 'inativo');
+
+  document.getElementById('badgePendentes').textContent = status.pendentes ?? '—';
+
+  // Botões
+  document.getElementById('btnIniciar').disabled = status.schedulerAtivo || status.postando;
+  document.getElementById('btnParar').disabled = !status.schedulerAtivo;
+  document.getElementById('btnPostar').disabled = status.postando;
+
+  // Horários
+  const lista = document.getElementById('scheduleList');
+  if (status.proximasPostagens && status.proximasPostagens.length > 0) {
+    const horas = ['08:00', '13:00', '18:00'];
+    lista.innerHTML = status.proximasPostagens.map((prox, i) => `
+      <div class="schedule-item">
+        <span class="clock">⏰</span>
+        <div class="info">
+          <div class="time">${horas[i] || status.horarios?.[i] || '—'}</div>
+          <div class="next">${prox}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ── Listeners ─────────────────────────────────────────────────
+app.onLog(adicionarLinha);
+
+app.onLogsIniciais((logs) => {
+  logs.reverse().forEach(adicionarLinha);
+});
+
+app.onStatus(atualizarUI);
+
+// Solicita status inicial
+setTimeout(() => app.enviar('refresh'), 500);
+</script>
+</body>
+</html>
